@@ -11,7 +11,7 @@ import { createGatewayApp } from "../../../services/gateway/dist/app.js";
 import { searchCouncilMemory } from "../../../services/gateway/dist/council-memory.js";
 
 const reportDir = "/home/exor/Leonardo/reports/bankr_council_memory_attack_round_20260619";
-const reportPath = join(reportDir, "BASE_SEPOLIA_PAID_ATTACK_RECEIPT_20260619.json");
+const reportPath = join(reportDir, "BASE_SEPOLIA_PAID_ATTACK_FINAL_RECEIPT_20260619.json");
 const started_at = new Date().toISOString();
 const historyRoot = mkdtempSync(join(tmpdir(), "leo-gateway-paid-x402-attack-"));
 const namespace = "gateway-test-paid-x402-attack";
@@ -251,6 +251,8 @@ try {
     cleanCheck.witness_metadata?.leonardo_graph_write_authority === false &&
     cleanCheck.witness_metadata?.bankr_write_authority === false &&
     cleanCheck.witness_metadata?.leo_movement_authority === false &&
+    cleanCheck.chain.waited_tx_receipt?.status === "success" &&
+    cleanCheck.chain.transfer_log_count >= 1 &&
     BigInt(cleanCheck.chain.balance_raw) >= 50000n &&
     payer.address.toLowerCase() !== payTo.toLowerCase();
 
