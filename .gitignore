@@ -1,0 +1,42 @@
+# dependencies
+node_modules
+.pnp
+.pnp.*
+
+# builds
+.next
+out
+dist
+build
+*.tsbuildinfo
+
+# test / coverage
+coverage
+playwright-report
+test-results
+
+# foundry
+packages/contracts/cache
+packages/contracts/out
+packages/contracts/broadcast
+
+# env / secrets
+.env
+.env*.local
+*.pem
+
+# supabase
+supabase/.branches
+supabase/.temp
+
+# misc
+.DS_Store
+.vercel
+.turbo
+*.log
+apps/web/.env.production
+.env.gateway-sync
+
+# Python
+__pycache__/
+*.pyc

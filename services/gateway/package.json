@@ -1,0 +1,22 @@
+{
+  "name": "@leonardo/gateway",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "serve": "bun run src/serve.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
+    "hono": "^4.6.0",
+    "neo4j-driver": "^5.27.0",
+    "viem": "^2.21.0",
+    "x402-hono": "^0.5.0",
+    "@leonardo/shared": "workspace:*",
+    "@leonardo/identity-kernel": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0"
+  }
+}

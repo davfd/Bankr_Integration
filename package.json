@@ -1,0 +1,20 @@
+{
+  "name": "leonardo-platform",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -b --pretty",
+    "build": "pnpm -r build",
+    "bankr:smoke:preflight": "pnpm --filter @leonardo/gateway build && node --loader ./scripts/node-esm-extension-loader.mjs ./services/gateway/dist/bankr-live-smoke.js --preflight",
+    "bankr:smoke:live": "pnpm --filter @leonardo/gateway build && node --loader ./scripts/node-esm-extension-loader.mjs ./services/gateway/dist/bankr-live-smoke.js",
+    "passport:grant:plan": "pnpm --filter @leonardo/gateway build && node --loader ./scripts/node-esm-extension-loader.mjs ./services/gateway/dist/identity-kernel-passport-grant-update-cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

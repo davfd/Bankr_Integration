@@ -1,0 +1,21 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "passport_id": "6960",
+  "agent_id": "leonardo-demo-agent",
+  "name": "Leonardo Demo Agent Passport",
+  "description": "Public demo Agent Passport fixture for Leonardo's Identity Kernel resolver smoke. It is a testnet identity document, not a production trust guarantee.",
+  "active_system_prompt_hash": "sha256:7cd15ae861aa3a6a011efcb219f6ddf832dcd6923624c82aca71fff7d1dde675",
+  "authority_scope": ["answer", "search", "summarize"],
+  "risk_context": "public_chat",
+  "protocol": "leonardo-identity-kernel-v0",
+  "endpoints": [
+    {
+      "name": "web",
+      "endpoint": "https://www.leonardo-ai.io/tools/passport"
+    }
+  ],
+  "x402Support": false,
+  "active": true,
+  "registrations": [],
+  "supportedTrust": ["identity_kernel", "receipts"]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@leonardo/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10"
+  }
+}

@@ -1,0 +1,4 @@
+name: leo_web_identity_tool_guard
+version: 0.1.0
+description: Block web ACP tools before dispatch when they exceed the installed Identity Kernel passport authority boundary.
+kind: standalone
