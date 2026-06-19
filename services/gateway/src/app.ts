@@ -29,6 +29,7 @@ import {
   deleteConversation,
 } from "./history";
 import { recordCouncil, searchCouncilMemory } from "./council-memory";
+import { prepareCouncilGatewayMemoryCapture } from "./council-gateway-memory-capture";
 import { createEvalService, EvalValidationError, FullRunBlockedError, SampleRunBlockedError, type EvalCompleteRunQuery, type EvalService, type EvalSplit } from "./evals";
 import { DEFAULT_MCP_TOKEN_EXPIRY_DAYS, createMcpToken, listMcpTokens, revokeMcpToken, rotateMcpToken, verifyMcpToken } from "./mcp-tokens";
 import { graphMcpRequiredScope, graphMcpToolName, handleGraphMcpRequest } from "./mcp-graph";
@@ -581,11 +582,17 @@ export function createGatewayApp(opts: GatewayOptions = {}): Hono {
     const seat = body.seat && SEAT_RE.test(body.seat) ? body.seat : undefined;
     try {
       const out = await councilReview({ idea, seat });
+      const verdicts = [{ seat: out.seat, verdict: out.verdict }];
+      const capture = prepareCouncilGatewayMemoryCapture({ idea, verdicts });
+      if (!capture.ok) {
+        return c.json({ ok: false, code: capture.code, error: capture.error, dlp_hits: capture.dlp_hits ?? [] }, capture.status);
+      }
       const w = decodeX402Payer(c.req.header("x-payment")) ?? verifySessionToken(c.req.header("x-leo-session"));
       logUsage({ wallet: w ?? "anonymous", kind: "council", units: 1 });
       if (w) try { appendHistory(w, { kind: "council", q: idea, a: `[${out.seat}] ${out.verdict}` }); } catch {}
-      // Capture into council memory (full text, searchable by the chat tool).
-      try { recordCouncil({ wallet: w, idea, mode: "quick", verdicts: [{ seat: out.seat, verdict: out.verdict }] }); } catch {}
+      if (capture.capture) {
+        try { recordCouncil({ wallet: w, idea, mode: "quick", verdicts, ...capture.metadata }); } catch {}
+      }
       return c.json({ ok: true, ...out });
     } catch {
       return c.json({ ok: false, error: "review failed" }, 502);
@@ -602,11 +609,16 @@ export function createGatewayApp(opts: GatewayOptions = {}): Hono {
     }
     try {
       const out = await councilPanel({ idea });
+      const capture = prepareCouncilGatewayMemoryCapture({ idea, verdicts: out.verdicts, synthesis: out.synthesis });
+      if (!capture.ok) {
+        return c.json({ ok: false, code: capture.code, error: capture.error, dlp_hits: capture.dlp_hits ?? [] }, capture.status);
+      }
       const w = decodeX402Payer(c.req.header("x-payment")) ?? verifySessionToken(c.req.header("x-leo-session"));
       logUsage({ wallet: w ?? "anonymous", kind: "council_panel", units: 1 });
       if (w) try { appendHistory(w, { kind: "council", q: idea, a: `[panel ruling] ${out.synthesis}` }); } catch {}
-      // Capture the full panel into council memory (searchable by the chat tool).
-      try { recordCouncil({ wallet: w, idea, mode: "panel", verdicts: out.verdicts, synthesis: out.synthesis }); } catch {}
+      if (capture.capture) {
+        try { recordCouncil({ wallet: w, idea, mode: "panel", verdicts: out.verdicts, synthesis: out.synthesis, ...capture.metadata }); } catch {}
+      }
       return c.json({ ok: true, ...out });
     } catch {
       return c.json({ ok: false, error: "review failed" }, 502);

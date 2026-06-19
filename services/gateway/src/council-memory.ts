@@ -32,6 +32,14 @@ export type CouncilRecord = {
   mode: "quick" | "panel";
   verdicts: { seat: string; verdict: string }[];
   synthesis: string;
+  writer_path?: "council-gateway";
+  authority_class?: "witness_only";
+  capture_namespace?: string;
+  capture_target?: "file:council-memory";
+  dlp_checked?: true;
+  leonardo_graph_write_authority?: false;
+  bankr_write_authority?: false;
+  leo_movement_authority?: false;
 };
 
 function load(): CouncilRecord[] {
@@ -49,6 +57,14 @@ export function recordCouncil(r: {
   mode: "quick" | "panel";
   verdicts?: { seat: string; verdict: string }[];
   synthesis?: string;
+  writer_path?: "council-gateway";
+  authority_class?: "witness_only";
+  capture_namespace?: string;
+  capture_target?: "file:council-memory";
+  dlp_checked?: true;
+  leonardo_graph_write_authority?: false;
+  bankr_write_authority?: false;
+  leo_movement_authority?: false;
 }): CouncilRecord {
   mkdirSync(join(root(), "council-memory"), { recursive: true });
   const list = load();
@@ -63,6 +79,14 @@ export function recordCouncil(r: {
       verdict: String(v.verdict).slice(0, 4000),
     })),
     synthesis: String(r.synthesis ?? "").slice(0, 4000),
+    ...(r.writer_path ? { writer_path: r.writer_path } : {}),
+    ...(r.authority_class ? { authority_class: r.authority_class } : {}),
+    ...(r.capture_namespace ? { capture_namespace: r.capture_namespace } : {}),
+    ...(r.capture_target ? { capture_target: r.capture_target } : {}),
+    ...(r.dlp_checked ? { dlp_checked: r.dlp_checked } : {}),
+    ...(r.leonardo_graph_write_authority === false ? { leonardo_graph_write_authority: false as const } : {}),
+    ...(r.bankr_write_authority === false ? { bankr_write_authority: false as const } : {}),
+    ...(r.leo_movement_authority === false ? { leo_movement_authority: false as const } : {}),
   };
   list.push(rec);
   writeFileSync(file(), JSON.stringify(list.length > CAP ? list.slice(-CAP) : list), "utf8");
