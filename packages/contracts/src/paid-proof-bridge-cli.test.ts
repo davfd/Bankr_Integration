@@ -27,5 +27,20 @@ describe("paid x402 proof bridge CLI", () => {
     expect(readme).toContain("pnpm bankr:proof:bridge");
     expect(readme).toContain("offline/no-spend");
     expect(readme).toContain("public-source → final-receipt provenance");
+    expect(readme).toContain("proof-bridge.yml");
+  });
+
+  it("runs the public proof bridge in CI without secrets, installs, RPC, or spend", () => {
+    const workflowPath = ".github/workflows/proof-bridge.yml";
+    expect(existsSync(join(process.cwd(), workflowPath))).toBe(true);
+
+    const workflow = repoFile(workflowPath);
+    expect(workflow).toContain("name: Paid proof bridge");
+    expect(workflow).toContain("pull_request:");
+    expect(workflow).toContain("push:");
+    expect(workflow).toContain("permissions:");
+    expect(workflow).toContain("contents: read");
+    expect(workflow).toContain("node scripts/verify-paid-proof-bridge.mjs");
+    expect(workflow).not.toMatch(/secrets\.|process\.env|env:|pnpm install|npm install|yarn install|BANKR|PRIVATE_KEY|RPC|x402|mainnet/i);
   });
 });

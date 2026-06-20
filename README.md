@@ -1,5 +1,7 @@
 # leonardo-platform
 
+[![Paid proof bridge](https://github.com/davfd/Bankr_Integration/actions/workflows/proof-bridge.yml/badge.svg)](https://github.com/davfd/Bankr_Integration/actions/workflows/proof-bridge.yml)
+
 The hosted platform for [Leonardo](https://www.leonardo-ai.io): run an agent on the harness,
 with the Council and Workshop as services, quests, metered in $LEO on Base. ERC-8004-native,
 x402-settled. **Offchain execution, onchain trust.**
