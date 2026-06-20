@@ -22,7 +22,12 @@ supabase/            versioned migrations + RLS policies
 pnpm install
 pnpm typecheck
 pnpm test          # vitest — unit + integration
+pnpm bankr:proof:bridge  # offline/no-spend public-source → final-receipt provenance check
 ```
+
+## Public proof bridge
+
+`pnpm bankr:proof:bridge` is an offline/no-spend verifier for the Bankr/x402 proof bridge. It reads only repository source, performs no wallet signing, no RPC calls, no Bankr writes, and no x402 payment. The check fails if the public paid-proof runner stops binding to `BASE_SEPOLIA_PAID_ATTACK_FINAL_RECEIPT_20260619.json`, reintroduces the older non-final receipt name, or loses the tx-success / transfer-log settlement guards.
 
 ## Status
 - **M0 · scaffold + CI + integrity invariant** — ✅ done (tsc + vitest green)
