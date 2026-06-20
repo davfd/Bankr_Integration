@@ -29,7 +29,7 @@ pnpm bankr:proof:bridge  # offline/no-spend public-source → final-receipt prov
 
 ## Public proof bridge
 
-`pnpm bankr:proof:bridge` is an offline/no-spend verifier for the Bankr/x402 proof bridge. It reads only repository source, performs no wallet signing, no RPC calls, no Bankr writes, and no x402 payment. The check fails if the public paid-proof runner stops binding to `BASE_SEPOLIA_PAID_ATTACK_FINAL_RECEIPT_20260619.json`, reintroduces the older non-final receipt name, or loses the tx-success / transfer-log settlement guards.
+`pnpm bankr:proof:bridge` is an offline/no-spend verifier for the Bankr/x402 proof bridge. It reads only repository source and `proofs/BASE_SEPOLIA_PAID_ATTACK_FINAL_RECEIPT_20260619.json`, performs no wallet signing, no RPC calls, no Bankr writes, and no x402 payment. The check fails if the public paid-proof runner stops binding to `BASE_SEPOLIA_PAID_ATTACK_FINAL_RECEIPT_20260619.json`, reintroduces the older non-final receipt name, loses the tx-success / transfer-log settlement guards, or if the public final receipt fixture no longer hashes to the sealed `9fcda5aecc41253ab5cb2b72d799bd139066eb2d41bdf7b82bc0b34e08a14560` receipt with DLP, witness-only memory, payer/payTo, and transfer-log evidence intact.
 
 ## Status
 - **M0 · scaffold + CI + integrity invariant** — ✅ done (tsc + vitest green)

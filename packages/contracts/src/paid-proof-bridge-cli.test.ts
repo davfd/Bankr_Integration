@@ -43,4 +43,68 @@ describe("paid x402 proof bridge CLI", () => {
     expect(workflow).toContain("node scripts/verify-paid-proof-bridge.mjs");
     expect(workflow).not.toMatch(/secrets\.|process\.env|env:|pnpm install|npm install|yarn install|BANKR|PRIVATE_KEY|RPC|x402|mainnet/i);
   });
+
+  it("binds a self-contained public final receipt fixture to the no-spend verifier", () => {
+    const proofPath = "proofs/BASE_SEPOLIA_PAID_ATTACK_FINAL_RECEIPT_20260619.json";
+    expect(existsSync(join(process.cwd(), proofPath))).toBe(true);
+
+    const receiptText = repoFile(proofPath);
+    const receipt = JSON.parse(receiptText) as {
+      pass?: boolean;
+      network?: string;
+      payer?: string;
+      payTo?: string;
+      payer_equals_payTo?: boolean;
+      no_mainnet?: boolean;
+      no_bankr_write?: boolean;
+      no_leo_movement?: boolean;
+      no_production_deploy?: boolean;
+      no_authority_graph_mutation?: boolean;
+      malicious_check?: { dlp_blocked?: boolean; raw_secret_in_response?: boolean; raw_secret_in_memory?: boolean; memory_records_after_malicious?: number };
+      clean_paid_capture_check?: {
+        ok?: boolean;
+        memory_records_after_clean?: number;
+        witness_metadata?: { authority_class?: string; writer_path?: string; bankr_write_authority?: boolean; leo_movement_authority?: boolean; leonardo_graph_write_authority?: boolean };
+        payment_response?: { transaction?: string; network?: string };
+        chain?: { transfer_log_count?: number; logs?: Array<{ tx_hash?: string; value_raw?: string; from?: string; to?: string }>; tx_receipt?: { status?: string; tx_hash?: string } };
+      };
+    };
+
+    expect(receipt.pass).toBe(true);
+    expect(receipt.network).toBe("base-sepolia");
+    expect(receipt.payer_equals_payTo).toBe(false);
+    expect(receipt.no_mainnet).toBe(true);
+    expect(receipt.no_bankr_write).toBe(true);
+    expect(receipt.no_leo_movement).toBe(true);
+    expect(receipt.no_production_deploy).toBe(true);
+    expect(receipt.no_authority_graph_mutation).toBe(true);
+    expect(receipt.malicious_check).toMatchObject({
+      dlp_blocked: true,
+      raw_secret_in_response: false,
+      raw_secret_in_memory: false,
+      memory_records_after_malicious: 0,
+    });
+    expect(receipt.clean_paid_capture_check?.witness_metadata).toMatchObject({
+      writer_path: "council-gateway",
+      authority_class: "witness_only",
+      bankr_write_authority: false,
+      leo_movement_authority: false,
+      leonardo_graph_write_authority: false,
+    });
+    expect(receipt.clean_paid_capture_check?.chain?.tx_receipt?.status).toBe("success");
+    expect(receipt.clean_paid_capture_check?.chain?.transfer_log_count).toBeGreaterThanOrEqual(1);
+    expect(receipt.clean_paid_capture_check?.chain?.logs?.[0]?.value_raw).toBe("50000");
+    expect(receipt.clean_paid_capture_check?.chain?.logs?.[0]?.from).toBe(receipt.payer);
+    expect(receipt.clean_paid_capture_check?.chain?.logs?.[0]?.to).toBe(receipt.payTo);
+    expect(receipt.clean_paid_capture_check?.chain?.logs?.[0]?.tx_hash).toBe(receipt.clean_paid_capture_check?.payment_response?.transaction);
+    expect(receipt.clean_paid_capture_check?.chain?.tx_receipt?.tx_hash).toBe(receipt.clean_paid_capture_check?.payment_response?.transaction);
+    expect(receiptText).not.toMatch(/bk_test_should_never_appear|CANARY_PAID_X402|0x2222222222222222222222222222222222222222222222222222222222222222/);
+
+    const verifier = repoFile("scripts/verify-paid-proof-bridge.mjs");
+    expect(verifier).toContain(proofPath);
+    expect(verifier).toContain("receipt_sha256_matches_expected");
+    expect(verifier).toContain("receipt_payment_log_tx_matches_payment_response");
+    expect(verifier).toContain("receipt_payment_parties_match_top_level");
+    expect(verifier).toContain("receipt_witness_metadata_fail_closed");
+  });
 });

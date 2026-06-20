@@ -1,0 +1,80 @@
+{
+  "receipt_type": "base_sepolia_paid_gateway_memory_attack",
+  "started_at": "2026-06-19T18:42:30.667Z",
+  "finished_at": "2026-06-19T18:42:31.986Z",
+  "repo_commit": "557d4d7d5e4d4975f21afdbb89e949b9969f6e58",
+  "repair_commit": "01d9738084e8e8df597a73b79601f48ecb509f05",
+  "network": "base-sepolia",
+  "route": "/api/council/review",
+  "price": "0.05 USDC testnet x402 for settled clean call; malicious 422 is not settled by x402 middleware",
+  "payer": "0xB4b90D033bA1Fe07c5E178CC6FcE10ab18822eF8",
+  "payTo": "0x9d4d6891e61aa77613217B02862Bbd1b33620356",
+  "payer_equals_payTo": false,
+  "namespace": "gateway-test-paid-x402-attack",
+  "no_mainnet": true,
+  "no_bankr_write": true,
+  "no_leo_movement": true,
+  "no_production_deploy": true,
+  "no_authority_graph_mutation": true,
+  "malicious_payload_sha256": "21df1983ff00fe1f2efcb6753867c720aec9cbfeaf2b79952eff7b8167c51d6d",
+  "malicious_check": {
+    "response_status": 422,
+    "dlp_blocked": true,
+    "raw_secret_in_response": false,
+    "raw_secret_in_memory": false,
+    "memory_records_after_malicious": 0,
+    "payment_response_present": false,
+    "note": "x402 settlement is expected not to occur on final 422; clean paid call below proves settlement."
+  },
+  "clean_paid_capture_check": {
+    "response_status": 200,
+    "ok": true,
+    "raw_secret_in_response": false,
+    "search_hits": 1,
+    "memory_records_after_clean": 1,
+    "witness_metadata": {
+      "writer_path": "council-gateway",
+      "authority_class": "witness_only",
+      "capture_namespace": "gateway-test-paid-x402-attack",
+      "capture_target": "file:council-memory",
+      "dlp_checked": true,
+      "leonardo_graph_write_authority": false,
+      "bankr_write_authority": false,
+      "leo_movement_authority": false
+    },
+    "payment_response": {
+      "success": true,
+      "transaction": "0x3f6be6dd206b6dfff1a4aad8de6ca122ca441e76b2ae48272852ba2b00fa4ed6",
+      "network": "base-sepolia",
+      "payer": "0xB4b90D033bA1Fe07c5E178CC6FcE10ab18822eF8"
+    },
+    "chain": {
+      "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "balance_raw": "50000",
+      "balance_usdc": 0.05,
+      "latest_block": "43063190",
+      "from_block": "43063112",
+      "to_block": "43063152",
+      "transfer_log_count": 1,
+      "logs": [
+        {
+          "tx_hash": "0x3f6be6dd206b6dfff1a4aad8de6ca122ca441e76b2ae48272852ba2b00fa4ed6",
+          "block_number": "43063132",
+          "value_raw": "50000",
+          "from": "0xB4b90D033bA1Fe07c5E178CC6FcE10ab18822eF8",
+          "to": "0x9d4d6891e61aa77613217B02862Bbd1b33620356"
+        }
+      ],
+      "tx_receipt": {
+        "tx_hash": "0x3f6be6dd206b6dfff1a4aad8de6ca122ca441e76b2ae48272852ba2b00fa4ed6",
+        "status": "success",
+        "block_number": "43063132",
+        "from": "0xd407e409e34e0b9afb99ecceb609bdbcd5e7f1bf",
+        "to": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+        "logs_count": 2
+      }
+    }
+  },
+  "pass": true,
+  "finalized_at": "2026-06-19T18:44:29.024Z"
+}
